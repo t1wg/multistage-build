@@ -1,6 +1,6 @@
 FROM python:latest as build
 
-WORKDIR /app
+WORKDIR /src
 
 COPY <<EOF /src/main.py
 #!/usr/bin/env python3
