@@ -18,6 +18,8 @@ RUN pip install pyinstaller
 
 RUN pyinstaller --onefile --windowed main.py
 
+RUN ls dist/
+
 FROM debian
-COPY --from=build /src/main /bin/main
+COPY --from=build /src/dist/main /bin/main
 CMD ["/bin/main"]
