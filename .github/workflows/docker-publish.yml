@@ -84,4 +84,46 @@ jobs:
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+  notify-failure:
+      runs-on: ubuntu-latest
+      if: ${{ always() && contains(needs.*.result, 'failure') }}
+      permissions:
+        contents: read
+        packages: write
+      # This is used to complete the identity challenge
+      # with sigstore/fulcio when running outside of PRs.
+        id-token: write
+
+      steps:
+        - name: Slack Notification
+          uses: rtCamp/action-slack-notify@v2
+          env:
+            SLACK_CHANNEL: test-notifications
+            SLACK_COLOR: 'failure' # or a specific color like 'good' or '#ff00ff'
+            SLACK_ICON: https://github.com/rtCamp.png?size=48
+            SLACK_MESSAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+            SLACK_TITLE: Post Title
+            SLACK_USERNAME: test
+            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+  notify-success:
+      runs-on: ubuntu-latest
+      if: ${{ always() && contains(needs.*.result, 'success') }}
+      permissions:
+        contents: read
+        packages: write
+      # This is used to complete the identity challenge
+      # with sigstore/fulcio when running outside of PRs.
+        id-token: write
+
+      steps:
+        - name: Slack Notification
+          uses: rtCamp/action-slack-notify@v2
+          env:
+            SLACK_CHANNEL: test-notifications
+            SLACK_COLOR: 'success' # or a specific color like 'good' or '#ff00ff'
+            SLACK_ICON: https://github.com/rtCamp.png?size=48
+            SLACK_MESSAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+            SLACK_TITLE: Post Title
+            SLACK_USERNAME: test
+            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
