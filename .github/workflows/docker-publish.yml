@@ -85,6 +85,7 @@ jobs:
         # against the sigstore community Fulcio instance.
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
   notify-failure:
+      needs: [build]
       runs-on: ubuntu-latest
       if: ${{ always() && contains(needs.*.result, 'failure') }}
       permissions:
@@ -106,6 +107,7 @@ jobs:
             SLACK_USERNAME: test
             SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
   notify-success:
+      needs: [build]
       runs-on: ubuntu-latest
       if: ${{ always() && contains(needs.*.result, 'success') }}
       permissions:
