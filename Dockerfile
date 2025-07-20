@@ -1,25 +1,16 @@
-FROM python:latest as build
+FROM python:3.11-slim as builder
 
-WORKDIR /src
+WORKDIR /app
 
-COPY <<EOF /src/main.py
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-def main():
-    print("Hello, World!")
-    name = input("What's your name? ")
-    print(f"Nice to meet you, {name}!")
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends binutils && \
+    rm -rf /var/lib/apt/lists/*
 
-if __name__ == "__main__":
-    main()
-EOF
+COPY main.py .
 
-RUN pip install pyinstaller
+RUN pip install --no-cache-dir pyinstaller && \
+    pyinstaller --onefile --name myapp --clean main.py
 
-RUN pyinstaller --onefile --windowed main.py
-
-RUN ls dist/
-
-FROM debian
-COPY --from=build /src/dist/main /bin/main
-CMD ["/bin/main"]
+FROM debian:stable-slim
+COPY --from=builder /app/dist/myapp /usr/local/bin/myapp
+CMD ["/usr/local/bin/myapp"]
