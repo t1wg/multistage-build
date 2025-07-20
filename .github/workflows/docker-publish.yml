@@ -105,7 +105,7 @@ jobs:
             SLACK_MESSAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
             SLACK_TITLE: Post Title
             SLACK_USERNAME: test
-            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
   notify-success:
       needs: [build]
       runs-on: ubuntu-latest
@@ -127,5 +127,5 @@ jobs:
             SLACK_MESSAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
             SLACK_TITLE: Post Title
             SLACK_USERNAME: test
-            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL}}
 
